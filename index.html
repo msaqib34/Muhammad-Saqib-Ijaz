@@ -22,6 +22,9 @@
 				display: block; /* Ensure the image is displayed as a block element */
 			}
 		</style>
+		<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+                <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+
 	</head>
 	<body class="homepage is-preload">
 		<div id="page-wrapper">
@@ -147,6 +150,57 @@ I am very interested in Machine Learning and Data Science and am currently learn
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+		        <script>
+			    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+				const firebaseConfig = {
+				  apiKey: "AIzaSyBQGU7MvMSmktU_NZlz4Htbj0UD_XbOYKw",
+				  authDomain: "portfolio-788ca.firebaseapp.com",
+				  projectId: "portfolio-788ca",
+				  storageBucket: "portfolio-788ca.appspot.com",
+				  messagingSenderId: "543813603502",
+				  appId: "1:543813603502:web:3ae1ca5857457a79999d3f",
+				  measurementId: "G-26WRGQE3TF"
+				};
+			</script>
+		        <script>
+			    // Initialize Firebase
+			    firebase.initializeApp(firebaseConfig);
+			
+			    // Initialize Firestore
+			    const db = firebase.firestore();
+			
+			    // Function to track visitor
+			    async function trackVisitor() {
+			        try {
+			            // Fetch visitor IP address
+			            const response = await fetch('https://api.ipify.org?format=json');
+			            const data = await response.json();
+			            const ip = data.ip;
+			
+			            // Fetch visitor location using IPinfo API
+			            const locationResponse = await fetch(`https://ipinfo.io/${ip}/json?token=YOUR_IPINFO_TOKEN`);
+			            const locationData = await locationResponse.json();
+			
+			            // Store visitor data in Firestore
+			            await db.collection('visitors').add({
+			                ip: ip,
+			                country: locationData.country,
+			                region: locationData.region,
+			                city: locationData.city,
+			                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+			            });
+			
+			            console.log('Visitor data stored successfully.');
+			        } catch (error) {
+			            console.error('Error tracking visitor:', error);
+			        }
+			    }
+			
+			    // Track visitor when the page loads
+			    trackVisitor();
+                          </script>
+
+
 
 	</body>
 </html>
