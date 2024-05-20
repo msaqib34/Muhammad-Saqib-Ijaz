@@ -4,24 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visitor Dashboard</title>
+    <!-- Firebase App and Firestore -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+    <!-- Chart.js for visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <h1>Visitor Statistics Dashboard</h1>
-    <div>
-        <canvas id="countryChart"></canvas>
-    </div>
-    <div>
-        <canvas id="regionChart"></canvas>
-    </div>
-    <div>
-        <canvas id="cityChart"></canvas>
-    </div>
+    <!-- Initialize Firebase -->
     <script>
-       
-      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
           apiKey: "AIzaSyBQGU7MvMSmktU_NZlz4Htbj0UD_XbOYKw",
           authDomain: "portfolio-788ca.firebaseapp.com",
@@ -33,7 +26,9 @@
         };
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp(firebaseConfig);
+
+        // Initialize Firestore
         const db = firebase.firestore();
 
         // Function to fetch and display visitor stats
@@ -59,6 +54,7 @@
             const cityLabels = Object.keys(cityCounts);
             const cityData = Object.values(cityCounts);
 
+            // Create charts using Chart.js
             new Chart(document.getElementById('countryChart'), {
                 type: 'bar',
                 data: {
@@ -126,5 +122,17 @@
         // Call displayVisitorStats after a short delay to ensure Firestore data is loaded
         setTimeout(displayVisitorStats, 2000);
     </script>
+
+    <!-- Chart elements -->
+    <div>
+        <canvas id="countryChart"></canvas>
+    </div>
+    <div>
+        <canvas id="regionChart"></canvas>
+    </div>
+    <div>
+        <canvas id="cityChart"></canvas>
+    </div>
 </body>
 </html>
+
