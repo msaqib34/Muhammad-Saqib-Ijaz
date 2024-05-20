@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Dashboard</title>
+    <!-- Firebase App and Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+    <!-- Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Visitor Statistics Dashboard</h1>
+
+    <!-- Chart elements -->
+    <div>
+        <canvas id="visitsChart"></canvas>
+    </div>
+    <div>
+        <canvas id="cityChart"></canvas>
+    </div>
+
+    <script>
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+          const firebaseConfig = {
+            apiKey: "AIzaSyBQGU7MvMSmktU_NZlz4Htbj0UD_XbOYKw",
+            authDomain: "portfolio-788ca.firebaseapp.com",
+            projectId: "portfolio-788ca",
+            storageBucket: "portfolio-788ca.appspot.com",
+            messagingSenderId: "543813603502",
+            appId: "1:543813603502:web:3ae1ca5857457a79999d3f",
+            measurementId: "G-26WRGQE3TF"
+          };
+        firebase.initializeApp(firebaseConfig);
+
+        // Initialize Firestore
+        const db = firebase.firestore();
+
+        // Function to fetch and display visitor statistics
+        async function displayVisitorStats() {
+            const visitsByDay = {};
+            const cities = {};
+
+            // Get visitor data from Firestore
+            const snapshot = await db.collection('visitors').get();
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                // Count visits by day
+                const date = data.timestamp.toDate().toDateString();
+                visitsByDay[date] = (visitsByDay[date] || 0) + 1;
+                // Collect cities
+                const city = data.city;
+                cities[city] = (cities[city] || 0) + 1;
+            });
+
+            // Create visits chart using Chart.js
+            const visitDates = Object.keys(visitsByDay);
+            const visitCounts = Object.values(visitsByDay);
+            new Chart(document.getElementById('visitsChart'), {
+                type: 'line',
+                data: {
+                    labels: visitDates,
+                    datasets: [{
+                        label: 'Visits per Day',
+                        data: visitCounts,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Create city chart using Chart.js
+            const cityLabels = Object.keys(cities);
+            const cityData = Object.values(cities);
+            new Chart(document.getElementById('cityChart'), {
+                type: 'bar',
+                data: {
+                    labels: cityLabels,
+                    datasets: [{
+                        label: 'Visits by City',
+                        data: cityData,
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Call displayVisitorStats after a short delay to ensure Firestore data is loaded
+        setTimeout(displayVisitorStats, 2000);
+    </script>
+</body>
+</html>
